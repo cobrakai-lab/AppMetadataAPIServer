@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AppMetadataAPIServer.Controllers;
 using AppMetadataAPIServer.InputFormatters;
+using AppMetadataAPIServer.Models;
+using AppMetadataAPIServer.RequestProcessors;
+using AppMetadataAPIServer.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,6 +38,11 @@ namespace AppMetadataAPIServer
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "AppMetadataAPIServer", Version = "v1"});
             });
+
+            services.AddSingleton<IPayloadValidator<ApplicationMetadata>, ApplicationMetadataValidator>()
+                .AddSingleton<MetadataRequestProcessor, MetadataRequestProcessor>()
+                .AddSingleton<IPayloadParser, YamlPayloadParser>()
+                .AddSingleton<ICobraDB<ApplicationMetadata>, CobraDB<ApplicationMetadata>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
