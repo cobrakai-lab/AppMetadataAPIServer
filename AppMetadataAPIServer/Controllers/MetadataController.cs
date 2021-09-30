@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using AppMetadataAPIServer.Exceptions;
 using AppMetadataAPIServer.Models;
 using AppMetadataAPIServer.RequestProcessors;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +55,7 @@ namespace AppMetadataAPIServer.Controllers
                 logger.LogInformation($"start processing request");
                 
                 ApplicationMetadata metadata = payloadParser.Parse(input);
-                metadata = appMetadataValidator.Validate(metadata); 
+                appMetadataValidator.Validate(metadata); 
                 requestProcessor.Create(metadata);
                 
                 logger.LogInformation($"Successfully processed request");
@@ -63,13 +64,14 @@ namespace AppMetadataAPIServer.Controllers
             catch (Exception e)
             {
                 logger.LogError($"Got exception processing Create. Exception: {e}");
-                if (e is SemanticErrorException)
+                switch (e)
                 {
-                    return BadRequest("Payload is not correct YAML format");
-                }
-                else
-                {
-                    return BadRequest("Something wrong");
+                    case SemanticErrorException:
+                        return BadRequest("Payload is not correct YAML format");
+                    case InvalidPayloadException ipe:
+                        return BadRequest($"Invalid payload:{ipe.Message}");
+                    default:
+                        return BadRequest("Something wrong.");
                 }
             }
         }
