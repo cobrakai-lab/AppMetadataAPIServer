@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace AppMetadataAPIServer.Util
+namespace AppMetadataAPIServer.Validators
 {
     public static class EmailFormatValidator
     {

@@ -1,6 +1,6 @@
 using AppMetadataAPIServer.Models;
 
-namespace AppMetadataAPIServer.Mock
+namespace AppMetadataAPIServer.MockData
 {
     public static class MockDataProvider
     {

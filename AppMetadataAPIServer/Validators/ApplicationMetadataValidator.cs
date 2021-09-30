@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
+using AppMetadataAPIServer.Controllers;
 using AppMetadataAPIServer.Exceptions;
 using AppMetadataAPIServer.Models;
-using AppMetadataAPIServer.Util;
 using Microsoft.Extensions.Logging;
 
-namespace AppMetadataAPIServer.Controllers
+namespace AppMetadataAPIServer.Validators
 {
     public class ApplicationMetadataValidator : IPayloadValidator<ApplicationMetadata>
     {
@@ -59,9 +60,9 @@ namespace AppMetadataAPIServer.Controllers
             ValidateNoDuplicateNames(appMetadata.Maintainers);
         }
 
-        private void ValidateNoDuplicateNames(Maintainer[] maintainers)
+        private void ValidateNoDuplicateNames(IList<Maintainer> maintainers)
         {
-            if (maintainers.Select(_ => _.Name.Trim()).Distinct().Count() != maintainers.Length)
+            if (maintainers.Select(_ => _.Name.Trim()).Distinct().Count() != maintainers.Count)
             {
                 throw new InvalidPayloadException("Maintainers should be unique");
             }
@@ -108,6 +109,7 @@ namespace AppMetadataAPIServer.Controllers
             {
                 throw new InvalidPayloadException("Website is required.");
             }
+            //todo validate correct URL format
         }
 
         private void ValidateSource(ApplicationMetadata appMetadata)

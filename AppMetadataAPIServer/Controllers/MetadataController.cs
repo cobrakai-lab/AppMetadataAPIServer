@@ -1,16 +1,11 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using AppMetadataAPIServer.Exceptions;
 using AppMetadataAPIServer.Models;
 using AppMetadataAPIServer.RequestProcessors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using YamlDotNet.Core;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
-using static AppMetadataAPIServer.Mock.MockDataProvider;
+using static AppMetadataAPIServer.MockData.MockDataProvider;
 
 namespace AppMetadataAPIServer.Controllers
 {
@@ -67,7 +62,9 @@ namespace AppMetadataAPIServer.Controllers
                 switch (e)
                 {
                     case SemanticErrorException:
-                        return BadRequest("Payload is not correct YAML format");
+                        return BadRequest("Payload is not valid yaml format");
+                    case YamlException ye:
+                        return BadRequest($"Payload is malformed {ye.InnerException?.Message ?? ye.Message}");
                     case InvalidPayloadException ipe:
                         return BadRequest($"Invalid payload:{ipe.Message}");
                     default:

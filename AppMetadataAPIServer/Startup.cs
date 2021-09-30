@@ -7,6 +7,7 @@ using AppMetadataAPIServer.InputFormatters;
 using AppMetadataAPIServer.Models;
 using AppMetadataAPIServer.RequestProcessors;
 using AppMetadataAPIServer.Storage;
+using AppMetadataAPIServer.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
