@@ -1,11 +1,12 @@
 using System;
 using AppMetadataAPIServer.Exceptions;
 using AppMetadataAPIServer.Models;
+using AppMetadataAPIServer.Query;
 using AppMetadataAPIServer.RequestProcessors;
+using AppMetadataAPIServer.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using YamlDotNet.Core;
-using static AppMetadataAPIServer.MockData.MockDataProvider;
 
 namespace AppMetadataAPIServer.Controllers
 {
@@ -19,28 +20,40 @@ namespace AppMetadataAPIServer.Controllers
             IPayloadValidator<ApplicationMetadata> payloadValidator,
             MetadataRequestProcessor requestProcessor,
             IPayloadParser payloadParser,
-            ILogger<MetadataController> logger
+            ILogger<MetadataController> logger,
+            IQueryExecutor queryExecutor
             )
         {
             this.appMetadataValidator = payloadValidator;
             this.requestProcessor = requestProcessor;
             this.payloadParser = payloadParser;
             this.logger = logger;
+            this.queryExecutor = queryExecutor;
         }
         
         private readonly IPayloadValidator<ApplicationMetadata> appMetadataValidator;
         private readonly MetadataRequestProcessor requestProcessor;
         private readonly IPayloadParser payloadParser;
+        private readonly IQueryExecutor queryExecutor;
         
         private readonly ILogger logger;
 
 
         [HttpGet]
-        public ActionResult<ApplicationMetadata[]> Get()
+        public ActionResult<QueryResult> Query([FromQuery] QueryParameters queryParams)
         {
-            return new[] {mockMetadata1, mockMetadata2};
+            try
+            {
+                logger.LogInformation($"Starting processing query: {queryParams}");
+                QueryResult result =  this.queryExecutor.Run(queryParams);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"Got exception when processing Query request: {e}");
+                return Problem("uh oh...");
+            }
         }
-
        
         [HttpPost]
         public ActionResult<string> Create([FromBody]string input)
@@ -68,7 +81,7 @@ namespace AppMetadataAPIServer.Controllers
                     case InvalidPayloadException ipe:
                         return BadRequest($"Invalid payload:{ipe.Message}");
                     default:
-                        return BadRequest("Something wrong.");
+                        return Problem("Something wrong.");
                 }
             }
         }

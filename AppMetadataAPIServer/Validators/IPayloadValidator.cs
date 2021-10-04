@@ -1,4 +1,4 @@
-namespace AppMetadataAPIServer.Controllers
+namespace AppMetadataAPIServer.Validators
 {
     public interface IPayloadValidator<T>
     {
