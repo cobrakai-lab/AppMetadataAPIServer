@@ -8,11 +8,11 @@ namespace AppMetadataAPIServer.Query
 {
     public class QueryContext
     {
-        public IList<QueryTerm> AND { get; set; }
+        public IList<QueryTerm> ANDClause { get; set; }
 
         public override string ToString()
         {
-            IEnumerable<string> andClause = this.AND.Select(_ => _.ToString());
+            IEnumerable<string> andClause = this.ANDClause.Select(_ => _.ToString());
             return $"AND({String.Join(", ", andClause)})";
         }
     }

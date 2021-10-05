@@ -14,26 +14,9 @@ namespace AppMetadataAPIServer.Storage
 
         public ISet<ApplicationMetadataKey> Search(QueryContext queryContext)
         {
-            HashSet<ApplicationMetadataKey> keys = queryContext.AND.Select(GetKeysByQueryTerm)
-                .Aggregate(new HashSet<ApplicationMetadataKey>(), (keySet, next) =>  keySet.Intersect(next).ToHashSet() );
+            ISet<ApplicationMetadataKey> keys = queryContext.ANDClause.Select(GetKeysByQueryTerm)
+                .Aggregate( (keySet, next) =>  keySet.Intersect(next).ToHashSet() );
             return keys;
-        }
-        
-        private ISet<ApplicationMetadataKey> GetKeysByQueryTerm(QueryTerm term)
-        {
-            SearchableProperties propertyName = term.PropertyName;
-            string propertyValue = term.PropertyValue;
-
-            if (term.Comparator == Comparator.Equal)
-            {
-                return this.invertedIndex.GetOrDefault(propertyName, new Dictionary<string, ISet<ApplicationMetadataKey>>())
-                    .GetOrCreate(propertyValue, new HashSet<ApplicationMetadataKey>());
-            }
-            else
-            {
-                //TODO not supporting other comparators now.
-                return new HashSet<ApplicationMetadataKey>();
-            }
         }
         
         public void Index(ApplicationMetadata metadata)
@@ -47,6 +30,28 @@ namespace AppMetadataAPIServer.Storage
             IndexProperty(SearchableProperties.WebSite, metadata.Website.Trim(), key);
             IndexProperty(SearchableProperties.Source, metadata.Source.Trim(), key);
             IndexProperty(SearchableProperties.License, metadata.License.Trim(), key);
+        }
+
+        public ISet<ApplicationMetadataKey> GetIndexedKeys(SearchableProperties propertyName, string propertyValue)
+        {
+            return this.invertedIndex.GetOrDefault(propertyName, new Dictionary<string, ISet<ApplicationMetadataKey>>())
+                .GetOrCreate(propertyValue, new HashSet<ApplicationMetadataKey>());
+        }
+        
+        private ISet<ApplicationMetadataKey> GetKeysByQueryTerm(QueryTerm term)
+        {
+            SearchableProperties propertyName = term.PropertyName;
+            string propertyValue = term.PropertyValue;
+
+            if (term.Comparator == Comparator.Equal)
+            {
+                return GetIndexedKeys(propertyName, propertyValue);
+            }
+            else
+            {
+                //TODO not supporting other comparators now.
+                return new HashSet<ApplicationMetadataKey>();
+            }
         }
 
         private void IndexProperty(SearchableProperties propertyName, string propertyValue,

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AppMetadataAPIServer.Exceptions;
 using AppMetadataAPIServer.Models;
 using AppMetadataAPIServer.Validators;
@@ -10,7 +11,7 @@ using Moq;
 namespace AppMetadataAPIServer.UnitTest
 {
     [TestClass]
-    public class ApplicationMetadataValidatorTest
+    public class ApplicationMetadataValidatorTest: InputDataFixture
     {
         private readonly ApplicationMetadataValidator theValidator = new ApplicationMetadataValidator(Mock.Of<ILogger<ApplicationMetadataValidator>>());
         
@@ -19,42 +20,42 @@ namespace AppMetadataAPIServer.UnitTest
         {
             Should("throw if any field not given", () =>
             {
-                var mockMetadata = GetValidApplicationMetadata();
+                var mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Title = "";
                 Assert.ThrowsException<InvalidPayloadException>(() => theValidator.Validate(mockMetadata));
                 
-                mockMetadata = GetValidApplicationMetadata();
+                mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Version = "  ";
                 Assert.ThrowsException<InvalidPayloadException>(() => theValidator.Validate(mockMetadata));
                 
-                mockMetadata = GetValidApplicationMetadata();
+                mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Maintainers=new Maintainer[]{};
                 Assert.ThrowsException<InvalidPayloadException>(() => theValidator.Validate(mockMetadata));
 
-                mockMetadata = GetValidApplicationMetadata();
+                mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Company=null;
                 Assert.ThrowsException<InvalidPayloadException>(() => theValidator.Validate(mockMetadata));
                 
-                mockMetadata = GetValidApplicationMetadata();
+                mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Website="";
                 Assert.ThrowsException<InvalidPayloadException>(() => theValidator.Validate(mockMetadata));
                 
-                mockMetadata = GetValidApplicationMetadata();
+                mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Source="";
                 Assert.ThrowsException<InvalidPayloadException>(() => theValidator.Validate(mockMetadata));
 
-                mockMetadata = GetValidApplicationMetadata();
+                mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.License="";
                 Assert.ThrowsException<InvalidPayloadException>(() => theValidator.Validate(mockMetadata));
 
-                mockMetadata = GetValidApplicationMetadata();
+                mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Description="";
                 Assert.ThrowsException<InvalidPayloadException>(() => theValidator.Validate(mockMetadata));
             });
             
             Should("Not throw on valid metadata", () =>
             {
-                var mockMetadata = GetValidApplicationMetadata();
+                var mockMetadata = ValidApplicationMetadata[0];
                 theValidator.Validate(mockMetadata);
             });
         }
@@ -62,7 +63,7 @@ namespace AppMetadataAPIServer.UnitTest
         [TestMethod]
         public void ShouldValidateNoDuplicateMaintainerNames()
         {
-            var mockMetadata = GetValidApplicationMetadata();
+            var mockMetadata = ValidApplicationMetadata[0];
             mockMetadata.Maintainers = new List<Maintainer>()
             {
                 new() { Name = "Sam", Email = "a@b.com" },
@@ -76,7 +77,7 @@ namespace AppMetadataAPIServer.UnitTest
         {
             Should("throw on invalid emails", () =>
             {
-                var mockMetadata = GetValidApplicationMetadata();
+                var mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Maintainers = new List<Maintainer>()
                 {
                     new() { Name = "Sam", Email = "a@b." },
@@ -98,7 +99,7 @@ namespace AppMetadataAPIServer.UnitTest
             
             Should("pass on valid email",()=>
             {
-                var mockMetadata = GetValidApplicationMetadata();
+                var mockMetadata = ValidApplicationMetadata[0];
                 mockMetadata.Maintainers = new List<Maintainer>()
                 {
                     new() { Name = "Sam", Email = "abc@xyz.com" },
@@ -116,26 +117,5 @@ namespace AppMetadataAPIServer.UnitTest
         {
             act();
         }
-
-        private ApplicationMetadata GetValidApplicationMetadata()
-        {
-            return new ApplicationMetadata
-            {
-                Title = "app1",
-                Version = "0.0",
-                Maintainers = new[]{new Maintainer
-                    {
-                        Name = "Kai",
-                        Email = "i@g.com"
-                    }
-                } ,
-                Company = "cobrakai",
-                Website = "abc.com",
-                Source = "github.com",
-                License = "MIT",
-                Description ="test" 
-            };    
-        }
-
     }
 }

@@ -28,7 +28,7 @@ namespace AppMetadataAPIServer.Query
             
             QueryContext queryContext = new QueryContext
             {
-                AND = terms.ToList()
+                ANDClause = terms.ToList()
             };
 
             logger.LogInformation($"Created QueryContext: {queryContext}");
