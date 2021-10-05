@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AppMetadataAPIServer.Controllers;
 using AppMetadataAPIServer.InputFormatters;
 using AppMetadataAPIServer.Models;
+using AppMetadataAPIServer.Query;
 using AppMetadataAPIServer.RequestProcessors;
 using AppMetadataAPIServer.Storage;
 using AppMetadataAPIServer.Validators;
@@ -43,7 +44,9 @@ namespace AppMetadataAPIServer
             services.AddSingleton<IPayloadValidator<ApplicationMetadata>, ApplicationMetadataValidator>()
                 .AddSingleton<MetadataRequestProcessor, MetadataRequestProcessor>()
                 .AddSingleton<IPayloadParser, YamlPayloadParser>()
-                .AddSingleton<ICobraDB<ApplicationMetadata>, CobraDB<ApplicationMetadata>>();
+                .AddSingleton<ICobraSearch<ApplicationMetadataKey,ApplicationMetadata>, CobraSearchEngine>()
+                .AddSingleton<ICobraDB<ApplicationMetadataKey, ApplicationMetadata>, CobraDB>()
+                .AddSingleton<IQueryExecutor, QueryExecutor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

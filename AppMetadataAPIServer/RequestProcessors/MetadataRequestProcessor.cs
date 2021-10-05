@@ -5,9 +5,9 @@ namespace AppMetadataAPIServer.RequestProcessors
 {
     public class MetadataRequestProcessor
     {
-        private readonly ICobraDB<ApplicationMetadata> cobraDB;
+        private readonly ICobraDB<ApplicationMetadataKey,ApplicationMetadata> cobraDB;
 
-        public MetadataRequestProcessor(ICobraDB<ApplicationMetadata> cobraDb)
+        public MetadataRequestProcessor(ICobraDB<ApplicationMetadataKey,ApplicationMetadata> cobraDb)
         {
             this.cobraDB = cobraDb;
         }

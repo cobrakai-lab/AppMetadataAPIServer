@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AppMetadataAPIServer.Exceptions;
 using AppMetadataAPIServer.Models;
 using AppMetadataAPIServer.Query;
@@ -51,7 +52,7 @@ namespace AppMetadataAPIServer.Controllers
             catch (Exception e)
             {
                 logger.LogError($"Got exception when processing Query request: {e}");
-                return Problem("uh oh...");
+                return Problem("Something went wrong.");
             }
         }
        
