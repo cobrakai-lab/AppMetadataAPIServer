@@ -46,6 +46,7 @@ namespace AppMetadataAPIServer
                 .AddSingleton<IPayloadParser, YamlPayloadParser>()
                 .AddSingleton<ICobraSearch<ApplicationMetadataKey,ApplicationMetadata>, CobraSearchEngine>()
                 .AddSingleton<ICobraDB<ApplicationMetadataKey, ApplicationMetadata>, CobraDB>()
+                .AddSingleton<IQueryContextBuilder, QueryContextBuilder>()
                 .AddSingleton<IQueryExecutor, QueryExecutor>();
         }
 

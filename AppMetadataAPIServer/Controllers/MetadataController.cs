@@ -46,7 +46,7 @@ namespace AppMetadataAPIServer.Controllers
             try
             {
                 logger.LogInformation($"Starting processing query: {queryParams}");
-                QueryResult result =  this.queryExecutor.Run(queryParams);
+                QueryResult result =  this.queryExecutor.Execute(queryParams);
                 return Ok(result);
             }
             catch (Exception e)

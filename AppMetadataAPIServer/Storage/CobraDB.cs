@@ -67,6 +67,5 @@ namespace AppMetadataAPIServer.Storage
         {
             return keys.Select(key => this.core.GetOrDefault(key, null)).Where(_ => _ != null).ToList();
         }
-
     }
 }

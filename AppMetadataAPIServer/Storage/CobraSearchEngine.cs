@@ -14,7 +14,8 @@ namespace AppMetadataAPIServer.Storage
 
         public ISet<ApplicationMetadataKey> Search(QueryContext queryContext)
         {
-            HashSet<ApplicationMetadataKey> keys = queryContext.AND.SelectMany(GetKeysByQueryTerm).ToHashSet();
+            HashSet<ApplicationMetadataKey> keys = queryContext.AND.Select(GetKeysByQueryTerm)
+                .Aggregate(new HashSet<ApplicationMetadataKey>(), (keySet, next) =>  keySet.Intersect(next).ToHashSet() );
             return keys;
         }
         
