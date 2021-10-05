@@ -29,7 +29,6 @@ namespace AppMetadataAPIServer.Storage
             this.logger = logger;
         }
 
-
         public void Create(ApplicationMetadata entry)
         {
             lock (lockToken)
@@ -37,6 +36,12 @@ namespace AppMetadataAPIServer.Storage
                 CreateInternal(entry);
             }
         }
+        
+        public IList<ApplicationMetadata> FindBulk(ISet<ApplicationMetadataKey> keys)
+        {
+            return keys.Select(key => this.core.GetOrDefault(key, null)).Where(_ => _ != null).ToList();
+        }
+
 
         public QueryResult Query(QueryContext queryContext)
         {
@@ -61,11 +66,6 @@ namespace AppMetadataAPIServer.Storage
             }
             this.core.Add(key, entry);
             this.cobraSearch.Index(entry);
-        }
-        
-        private IList<ApplicationMetadata> FindBulk(ISet<ApplicationMetadataKey> keys)
-        {
-            return keys.Select(key => this.core.GetOrDefault(key, null)).Where(_ => _ != null).ToList();
         }
     }
 }
