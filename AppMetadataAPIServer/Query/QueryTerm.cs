@@ -1,4 +1,5 @@
 using AppMetadataAPIServer.Storage;
+using AppMetadataAPIServer.Utils;
 
 namespace AppMetadataAPIServer.Query
 {
@@ -11,25 +12,6 @@ namespace AppMetadataAPIServer.Query
         public override string ToString()
         {
             return $"{PropertyName}{Comparator.ToSymbolString()}{PropertyValue}";
-        }
-    }
-
-    public enum Comparator
-    {
-        Equal
-    }
-
-    public static class ComparatorExtension
-    {
-        public static string ToSymbolString(this Comparator comparator)
-        {
-            switch (comparator)
-            {
-                case Comparator.Equal:
-                    return "=";
-                default:
-                    return "n/a";
-            }
         }
     }
 }

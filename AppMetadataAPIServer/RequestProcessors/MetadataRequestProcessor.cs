@@ -16,5 +16,7 @@ namespace AppMetadataAPIServer.RequestProcessors
             cobraDB.Create(metadata);
         }
         
+        //todo move queryExecutor in here and create new public function to handle Query.
+        
     }
 }
