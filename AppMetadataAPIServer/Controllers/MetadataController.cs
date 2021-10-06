@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AppMetadataAPIServer.Exceptions;
 using AppMetadataAPIServer.Models;
+using AppMetadataAPIServer.Parser;
 using AppMetadataAPIServer.Query;
 using AppMetadataAPIServer.RequestProcessors;
 using AppMetadataAPIServer.Validators;

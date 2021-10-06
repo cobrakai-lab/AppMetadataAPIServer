@@ -2,7 +2,7 @@ using AppMetadataAPIServer.Models;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace AppMetadataAPIServer.Controllers
+namespace AppMetadataAPIServer.Parser
 {
     public class YamlPayloadParser: IPayloadParser
     {

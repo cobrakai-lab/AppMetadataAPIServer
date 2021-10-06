@@ -1,6 +1,6 @@
 using AppMetadataAPIServer.Models;
 
-namespace AppMetadataAPIServer.Controllers
+namespace AppMetadataAPIServer.Parser
 {
     public interface IPayloadParser
     {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AppMetadataAPIServer.Controllers;
 using AppMetadataAPIServer.InputFormatters;
 using AppMetadataAPIServer.Models;
+using AppMetadataAPIServer.Parser;
 using AppMetadataAPIServer.Query;
 using AppMetadataAPIServer.RequestProcessors;
 using AppMetadataAPIServer.Storage;
