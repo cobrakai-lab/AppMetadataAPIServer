@@ -8,7 +8,7 @@ namespace AppMetadataAPIServer.Query
 {
     public class QueryContext
     {
-        public IList<QueryTerm> ANDClause { get; set; }
+        public IList<QueryTerm> ANDClause { get; set; } = new List<QueryTerm>();
 
         public override string ToString()
         {

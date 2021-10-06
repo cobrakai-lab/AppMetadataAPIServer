@@ -133,6 +133,14 @@ namespace AppMetadataAPIServer.UnitTest.Storage
             ISet<ApplicationMetadataKey> result = this.cobraSearchEngine.Search(twoTerms);
             result.Should().BeEmpty();
         }
-        
+
+        [TestMethod]
+        public void ShouldReturnEmptyWhenNoQueryTerms()
+        {
+            QueryContext emptyTerms = new QueryContext();
+            ISet<ApplicationMetadataKey> result = this.cobraSearchEngine.Search(emptyTerms);
+            result.Should().BeEmpty(); 
+        }
+
     }
 }
