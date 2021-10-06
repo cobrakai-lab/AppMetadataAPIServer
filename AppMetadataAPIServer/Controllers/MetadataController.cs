@@ -81,6 +81,8 @@ namespace AppMetadataAPIServer.Controllers
                         return BadRequest($"Payload is malformed {ye.InnerException?.Message ?? ye.Message}");
                     case InvalidPayloadException ipe:
                         return BadRequest($"Invalid payload:{ipe.Message}");
+                    case DuplicateRecordException dre:
+                        return BadRequest($"Metadata already exists.");
                     default:
                         return Problem("Something wrong.");
                 }
