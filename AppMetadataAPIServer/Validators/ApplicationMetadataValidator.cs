@@ -47,7 +47,7 @@ namespace AppMetadataAPIServer.Validators
         
         private void ValidateMaintainers(ApplicationMetadata appMetadata)
         {
-            if (!appMetadata.Maintainers.Any())
+            if (!appMetadata.Maintainers?.Any() ?? true)
             {
                 throw new InvalidPayloadException("Maintainers is required.");
             }
