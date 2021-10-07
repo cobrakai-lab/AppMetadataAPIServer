@@ -1,11 +1,18 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
+using AppMetadataAPIServer.Models;
+using AppMetadataAPIServer.Query;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace AppMetadataAPIServer.IntegrationTest
 {
@@ -15,6 +22,10 @@ namespace AppMetadataAPIServer.IntegrationTest
         private HttpClient client;
 
         private const string Endpoint = "v1/metadata";
+        
+        private IDeserializer yamlDeserializer = new DeserializerBuilder()
+            .WithNamingConvention(LowerCaseNamingConvention.Instance)
+            .Build();
 
         [TestInitialize]
         public void TestInitialize()
@@ -75,6 +86,50 @@ namespace AppMetadataAPIServer.IntegrationTest
  
             string responseBody = await response.Content.ReadAsStringAsync();
             responseBody.Should().Be("Metadata already exists.");
+        }
+
+        [TestMethod]
+        public async Task ShouldQueryCorrectly()
+        {
+            string[] validPayloadFiles = Directory.GetFiles("test-data/valid-inputs").OrderBy(_=>_).ToArray();
+            IList<ApplicationMetadata> appMetadata = new List<ApplicationMetadata>();
+            foreach (string payloadFile in validPayloadFiles)
+            {
+                string payload = File.ReadAllText(payloadFile);
+                appMetadata.Add(this.yamlDeserializer.Deserialize<ApplicationMetadata>(payload));
+                await client.PostAsync(Endpoint, new StringContent(payload));
+            }
+            HttpResponseMessage response = await client.GetAsync($"{Endpoint}?title=Valid App 1&version=0.0.1");
+            var queryResult =await GetQueryResultFromResponse(response);
+            queryResult.IsSuccess.Should().BeTrue();
+            queryResult.resultData.Should().BeEquivalentTo(new List<ApplicationMetadata>(){appMetadata[0]});
+            
+            response = await client.GetAsync($"{Endpoint}?title=Valid App 2");
+            queryResult = await GetQueryResultFromResponse(response);
+            queryResult.IsSuccess.Should().BeTrue();
+            queryResult.resultData.Should().BeEquivalentTo(new List<ApplicationMetadata>(){appMetadata[2], appMetadata[3]});
+            
+            response = await client.GetAsync($"{Endpoint}?name=secondmaintainer app1&website=https://website.com");
+            queryResult = await GetQueryResultFromResponse(response);
+            queryResult.IsSuccess.Should().BeTrue();
+            queryResult.resultData.Should().BeEquivalentTo(
+                new List<ApplicationMetadata>(){appMetadata[0], appMetadata[1], appMetadata[2]});
+            
+            response = await client.GetAsync($"{Endpoint}?name=kai&website=https://website.com&license=apache");
+            queryResult = await GetQueryResultFromResponse(response);
+            queryResult.IsSuccess.Should().BeTrue();
+            queryResult.resultData.Should().BeEmpty();
+        }
+
+        private async Task<QueryResult> GetQueryResultFromResponse(HttpResponseMessage response)
+        {
+            string responseBody = await response.Content.ReadAsStringAsync();
+            QueryResult result = JsonSerializer.Deserialize<QueryResult>(responseBody, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return result;
         }
     }
 }
